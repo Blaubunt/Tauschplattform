@@ -7,57 +7,16 @@ Available functions are:
 * Searching offerings on the map by address and radius
 * Chat to communicate further trade details
 
-## Setup
-Prerequisites:
-* Google Account for using firebase
-* Heroku Account for hosting the application
-* 
-To setup and run a local instance clone the repository and follow these steps: 
-* Go to the [Firebase Console](https://console.firebase.google.com/)
-* Setup a new project
-* Once created the project add a Web-App to your project:<br>
-On the Homepage of your newly created Firebase-Project click on the web-icon (red circled on the screenshot)<br>
-    ![Firebase Console Screenshot](Documentation/FirebaseInit.PNG)
-    <br>
-* Inside Firebase-Console go to Database and create a realtime database in test mode with the name "exchangePlatform"
-Inside the project folder, navigate to /public and place a file called .env inside this folder.
-This file will contain all your firebase credentials. You can find the Credentials in the console in the project settings.
-The file has to have the following structure:
-
-```bash
-VUE_APP_API_KEY= <api-key>
-VUE_APP_AUTH_DOMAIN= <auth-domain>
-VUE_APP_DATABASE_URL= <database-url>
-VUE_APP_PROJECT_ID= <project-id>
-VUE_APP_APP_ID= <app-id>
-ALIGOLA_KEY = <aligola-api-key>
-```
-Just insert the plain keys, without the quotes and the commas. Go to your aligola profile and copy the api key in this file, too.
-
-
-For running your application, just follow these commands:
-```bash
-$ cd <respositoryName>
-$ npm install
-$ cd public
-$ npm install
-$ cd ..
-$ npm start
-```
-
-Your app should now be running on [localhost:5000](http://localhost:5000/).
-
-ToDos:
-* Encryption inside the database: Messages can be read by the administrator of the database
-<!-- 
 ## Backend API
 
-### GET /api/search
+### Offerings and Trades
 
-#### Example Request:
+#### GET /api/trades/:Id
 
+Returns the trades related to the UserID
+##### Example Request:
 ```
-http://localhost:5000/api/search?topLeftLocation=52.5,13&lowerRightLocation=54,14
+http://localhost:5000/api/trades/1234567
 ```
 
 #### Example Response:
@@ -65,110 +24,223 @@ http://localhost:5000/api/search?topLeftLocation=52.5,13&lowerRightLocation=54,1
 ```json
 [
     {
-        "user": "Wolverine",
+        "date": 1591865306639,
         "location": {
-            "lat": 52.5157723,
-            "lng": 13.3869281
+            "lat": 47.8119,
+            "lng": 9.65158
+        },
+        "offer": "Zahnpasta",
+        "tradeFor": "Deo",
+        "tradeId": "51578ac0-fe6f-4443-bd84-ab18266a7dc6",
+        "userId": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3"
+    },
+    {
+        "date": 1592128469421,
+        "location": {
+            "lat": 52.517,
+            "lng": 13.3889
         },
         "offer": "Nudeln",
-        "tradeFor": "Toiletten Papier"
-    },
-    {
-        "user": "Gandalf",
-        "location": {
-            "lat": 52.5670062,
-            "lng": 13.3936488
-        },
-        "offer": "Dosenwurst",
-        "tradeFor": "Mineralwasser"
+        "tradeFor": "Reis",
+        "tradeId": "60616e31-9d0e-4415-8bb4-7ac3a1ffaf71",
+        "userId": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3"
     }
 ]
 ```
 
-### GET /api/chat/:participantId
+#### POST /api/deleteTrade/:Id
 
-This requires a valid authentication token from Firebase. The user id is determined from the token.
-
-#### Example Request:
-
+Deletes the offer with the tradeId in the message body and returns the remaining trades
+##### Example message body:
+```json
+{
+    "tradeId":"sadasdg4-das2-rfg5-fsd5-123dasd",
+    "userId":"i0OnXR4C3uNAZ7YN8GN3tqLqtoI3"
+}
 ```
-http://localhost:5000/api/chat/KhxRmzKFILT8ziEwDhPJZd65lnq1
-```
-
 #### Example Response:
 
 ```json
 [
     {
-        "from": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
-        "to": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
-        "date": "2020-03-20T12:22:38 -00:00",
-        "text": "Hi Walter. Ich interessiere mich für dein Mineralwasser. Ich hätte Dosenwurst im Austausch."
-    },
-    {
-        "from": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
-        "to": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
-        "date": "2020-03-20T14:12:32 -00:00",
-        "text": "Gerne. Wann können wir die Waren austauschen?"
-    },
-    {
-        "from": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
-        "to": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
-        "date": "2020-03-20T14:13:23 -00:00",
-        "text": "In 10 min beim Kiosk an der Ecke."
-    },
-    {
-        "from": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
-        "to": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
-        "date": "2020-03-20T14:15:00 -00:00",
-        "text": "Ok. Bis gleich."
+        "date": 1591865306639,
+        "location": {
+            "lat": 47.8119,
+            "lng": 9.65158
+        },
+        "offer": "Zahnpasta",
+        "tradeFor": "Deo",
+        "tradeId": "51578ac0-fe6f-4443-bd84-ab18266a7dc6",
+        "userId": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3"
     }
 ]
 ```
 
-### POST /api/chat/:participantId
+#### POST /api/offerings
 
-This requires a valid authentication token from Firebase. The user id is determined from the token.
-
-#### Example Request body:
-
+Adds a new offer
+##### Example message body:
 ```json
 {
-    "message":"Hello!"
+  "userId": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3",
+  "offer": "Nudeln",
+  "location": { "lng": 13.3889, "lat": 52.517 },
+  "tradeFor": "Reis"
+}
+
+```
+
+#### Example Response:
+```json
+{
+    "tradeId": "059aab70-f685-4ab2-ac14-5baa8986e77e",
+    "userId": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3",
+    "offer": "Nudeln",
+    "tradeFor": "Reis",
+    "location": {
+        "lng": 13.3889,
+        "lat": 52.517
+    },
+    "date": 1592129489671
 }
 ```
 
-#### Response
+### Chats
 
-If the message was posted successfully, the endpoint will return `200 OK`.
+#### GET /api/chat/:conversationId
 
-## Technology Decisions
+Returns the messages for a specific conversation
+##### Example Request:
+```
+http://localhost:5000/api/chat/2652992626
+```
 
-### Vue.js for frontend
+#### Example Response:
 
-This is where we have the most frontend knowledge currently.
+```json
+[
+    {
+        "convId": 2652992626,
+        "date": 1591865323463,
+        "from": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3",
+        "message": "Hallo, ich würde gerne Brot gegen Zwiebeln tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?",
+        "to": "L8QiM13E1vMGOgJSQTaBMGCM0HK2",
+        "traderName": "User 1"
+    },
+    {
+        "convId": 2652992626,
+        "date": 1592125288011,
+        "from": "L8QiM13E1vMGOgJSQTaBMGCM0HK2",
+        "message": "Vielen Dank für Ihr Angebot. Gerne können wir uns heute Nachmittag am XY-Platz treffen um zu tauschen",
+        "to": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3",
+        "traderName": "User 2"
+    }
+]
+```
 
-### Node.js for backend
+#### POST /api/chat
 
-Node.js is easy to setup and learn. Additionally it allows frontend developers with a little Javascript knowledge to help out with backend development.
+Adds a new message to a conversation
+##### Example message body:
+```json
+{
+  "message": "Könnten wir uns heute Mittag treffen um den Tausch durchzuführen?",
+  "from": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3",
+  "to": "L8QiM13E1vMGOgJSQTaBMGCM0HK2",
+  "convId": 2652992626,
+  "dateSent": 1592130639018
+}
+```
+#### Example Response:
 
-### Heroku for deployment
+```json
+[
+    {
+        "date": 1591865306639,
+        "location": {
+            "lat": 47.8119,
+            "lng": 9.65158
+        },
+        "offer": "Zahnpasta",
+        "tradeFor": "Deo",
+        "tradeId": "51578ac0-fe6f-4443-bd84-ab18266a7dc6",
+        "userId": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3"
+    }
+]
+```
 
-Free to use. The following is an excerpt from the Heroku example project `getting-started-with-nodejs`.
+#### GET /api/conversations/:Id
 
-#### node-js-getting-started
+Returns the existing conversation for the requested UserId
+##### Example Request:
+```
+http://localhost:5000/api/conversations/i0OnXR4C3uNAZ7YN8GN3tqLqtoI3
+```
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+#### Example Response:
 
-This application supports the [Getting Started on Heroku with Node.js](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+```json
+[
+    {
+        "convId": 2652992626,
+        "lastMessage": 1592130639028,
+        "offer": "Reis",
+        "tradeFor": "Nudeln",
+        "tradeId": "959864f3-4e35-4d5d-bd0f-6472f3c7c0ee",
+        "tradeWith": "L8QiM13E1vMGOgJSQTaBMGCM0HK2",
+        "traderName": "User 1"
+    }
+]
+```
 
-##### Running Locally
+#### POST /api/conversations
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
+Adds a new conversation object to the database
+##### Example message body:
+```json
+{
+  "me": "i0OnXR4C3uNAZ7YN8GN3tqLqtoI3",
+  "offer": "Reis",
+  "tradeFor": "Nudeln",
+  "tradeId": "b2daf6ff-16ea-40b8-ab0c-7385ae3f3931",
+  "tradeWith": "L8QiM13E1vMGOgJSQTaBMGCM0HK2",
+  "convId": 2652992626
+}
+```
 
-```sh
-$ git clone https://github.com/heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
-$ npm install
-$ npm start
-``` -->
+### User
+
+#### GET /api/user/:Id
+
+Returns the data for the requested UserId
+##### Example Request:
+```
+http://localhost:5000/api/user/L8QiM13E1vMGOgJSQTaBMGCM0HK2
+```
+
+#### Example Response:
+
+```json
+[
+    {
+        "displayName": "User 1",
+        "email": "user1@mockmail.de",
+        "uid": "L8QiM13E1vMGOgJSQTaBMGCM0HK2"
+    }
+]
+
+```
+
+#### POST /api/user
+
+Saves the data for a new user
+##### Example message body:
+```json
+[
+    {
+        "email":"user1@mockmail.de",
+        "displayName":"User 1",
+        "uid": "L8QiM13E1vMGOgJSQTaBMGCM0HK2"
+    }
+]
+```
