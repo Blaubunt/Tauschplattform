@@ -15,7 +15,6 @@ const firebaseConfig = {
   databaseURL: process.env.VUE_APP_DATABASE_URL,     
   projectId: process.env.VUE_APP_PROJECT_URL,         
   appId: process.env.VUE_APP_APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
-process.env.testvalue="testvalue";
   firebase.initializeApp(firebaseConfig);
 
   
@@ -158,7 +157,11 @@ function deleteTrade(req, res){
 }
 async function saveUser(req, res){
   var exists = await fireData.ref('/user').child(req.body.uid).once('value');
-  if(exists.val()== null) fireData.ref('/user').child(req.body.uid).set(req.body);
+  if(exists.val() == null){
+    fireData.ref('/user').child(req.body.uid).set(req.body);
+  }else if(exists.val().displayName == null &&  req.body.displayName!=null){
+    fireData.ref('/user').child(req.body.uid).child("displayName").set(req.body.displayName);
+  }
   
   res.sendStatus(200);
 }

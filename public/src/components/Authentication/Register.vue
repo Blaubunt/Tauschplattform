@@ -185,24 +185,24 @@ export default {
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result)=>{
         vm.saveUser(result.user);
-        this.hide();
+        
       }).catch((err)=>{
         alert("Something went wrong");
       });
     },
-    submit() {
+    async submit() {
       var vm = this;
       if(this.register){
-        firebase
+        await firebase
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then(data => {
-          vm.saveUser(data.user);
           data.user
             .updateProfile({
               displayName: this.form.name
             })
             .then((user) => {
+              vm.saveUser(data.user);
               this.register=false;
               this.login=false;
               this.visible=false;
@@ -212,9 +212,8 @@ export default {
           this.error = err.message;
         });
       }else if(this.login){
-        firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).then((data)=>{
+        await firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).then((data)=>{
           vm.saveUser(data.user);
-          this.hide();
         });
       }
     },
@@ -227,7 +226,10 @@ export default {
       axios.post("/api/user", {uid:user.uid, displayName:user.displayName, email:user.email}).then(
         ()=>{
           axios.get('/api/user/'+user.uid).then((res)=>{
-            store.commit("SET_USER",res.data)});
+            store.commit("SET_USER",res.data);
+            this.hide();
+            });
+            
         }
       );
     },

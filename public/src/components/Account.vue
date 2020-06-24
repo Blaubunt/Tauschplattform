@@ -79,9 +79,9 @@
         <div v-if="dataLoaded">
             <div style="height:2.5vh;"/>
             <table class="tableSize">
-                <tr style="margin:5px"><td>Nutzername:</td><td>{{user.displayName}}</td></tr>
+                <tr style="margin:5px"><td>Nutzername:</td><td>{{currentUser.displayName}}</td></tr>
                 <tr><td style="padding-bottom:2vh"/></tr>
-                <tr><td>E-Mail:</td><td>{{user.email}}</td></tr>
+                <tr><td>E-Mail:</td><td>{{currentUser.email}}</td></tr>
                 <tr><td style="padding-bottom:2vh"/></tr>
                 <!-- <tr><td>Standort-Status:</td><td><md-icon v-if="hasLocation" style="color:mediumseagreen !important;">check_circle</md-icon><md-icon v-else style="color:indianred !important;">cancel</md-icon></td></tr> -->
 <!--                 <tr><td colspan="2"><md-button class="md-default tableSize" @click="changePasswd=true">Passwort ändern</md-button></td></tr>
@@ -119,7 +119,7 @@ export default {
     store,
     data(){
         return{
-            user:null,
+            currentUser:null,
             dataLoaded:false,
             deleteAccount:false,
             showRevalidation:false,
@@ -154,9 +154,8 @@ export default {
     mounted(){
         let vm=this;
         var _ = require('lodash');
-        this.user= this.$store.state.user;
-        this.$store.state.user==null ? this.dataLoaded=false:this.dataLoaded=true;
-        this.getTrades();
+        //this.$store.state.user==null ? this.dataLoaded=false:this.dataLoaded=true;
+        //this.getTrades();
         /* firebase.auth().onAuthStateChanged(function(user) {
             if(user){
                 vm.user=user;
@@ -170,6 +169,20 @@ export default {
                 vm.$modal.show();
             }
         }); */
+    },
+    computed: {
+        user(){
+            return this.$store.state.user;
+        }
+    },
+    watch:{
+        user(newUser, oldUser){
+            if(newUser.displayName!=null) {
+                this.currentUser=newUser;
+                this.dataLoaded=true;
+                
+            }
+        }
     },
     methods:{
         async showLocation(){
@@ -212,7 +225,7 @@ export default {
         },
         onReauthenticate(){
             let vm=this;
-            firebase.auth().signInWithEmailAndPassword(this.user.email, this.password).then((user)=>{
+            firebase.auth().signInWithEmailAndPassword(this.currentUser.email, this.password).then((user)=>{
             vm.showRevalidation=false;
             vm.deleteAccount=true;
             passwordDialog.querySelector('.error').innerHTML = '';
@@ -229,7 +242,7 @@ export default {
         checkPasswd(){
             let vm=this;
             if(this.newPasswd==this.newPasswdConf){
-                firebase.auth().signInWithEmailAndPassword(this.user.email, this.password).then((user)=>{
+                firebase.auth().signInWithEmailAndPassword(this.currentUser.email, this.password).then((user)=>{
                     firebase.auth().currentUser.updatePassword(this.newPasswd).then((user)=>{}).catch((error)=> {
                         changePasswd.querySelector('.error').innerHTML=error.message;
                     });
@@ -244,11 +257,9 @@ export default {
             }
         },
         addOffering(){
-            this.newTrade.userId = this.user.uid;
-            console.log(this.newTrade);
+            this.newTrade.userId = this.currentUser.uid;
             if(this.location!=null) this.newTrade.location=this.location;
             let vm=this;
-            console.log(this.newTrade);
             Axios.post("/api/offerings", this.newTrade).then(function(res){
                 vm.newOffering=false;
                 vm.newTrade.offer=null;
@@ -258,7 +269,7 @@ export default {
         },
         getTrades(){
             let vm=this;
-            Axios.get("/api/trades/"+this.user.uid).then(function(res){
+            Axios.get("/api/trades/"+this.currentUser.uid).then(function(res){
                res.data.forEach(element => {
                    vm.offerings.push(element);
                });
@@ -266,7 +277,7 @@ export default {
         },
         deleteOffer(offer){
             let vm=this;
-            Axios.post("/api/deleteTrade/"+this.user.uid,{tradeId:offer.tradeId, userId: offer.userId}).then(function(res){
+            Axios.post("/api/deleteTrade/"+this.currentUser.uid,{tradeId:offer.tradeId, userId: offer.userId}).then(function(res){
                 vm.offerings=[];
                 res.data.forEach(element => {
                    vm.offerings.push(element);
