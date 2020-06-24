@@ -148,7 +148,8 @@ export default {
             addressGiven:false,
             locationText:"Standort hinzufügen",
             hasLocation:false,
-            isLocation:false
+            isLocation:false,
+            tradesLoaded:false
         }
     },
     mounted(){
@@ -179,8 +180,11 @@ export default {
         user(newUser, oldUser){
             if(newUser.displayName!=null) {
                 this.currentUser=newUser;
+                if(this.tradesLoaded==false){
+                    this.tradesLoaded=true;
+                    this.getTrades();
+                }
                 this.dataLoaded=true;
-                
             }
         }
     },
