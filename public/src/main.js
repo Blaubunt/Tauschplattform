@@ -38,7 +38,6 @@ import LandingComponent from './components/LandingPage.vue'
 import ChatComponent from './components/Chat.vue'
 import AccountComponent from './components/Account.vue'
 import ChatOverviewComponent from './components/ChatOverview.vue'
-import VueGoogleAutocomplete from 'vue-google-autocomplete'
 
 Vue.config.productionTip = false
 const firebaseConfig = {     
@@ -47,7 +46,6 @@ const firebaseConfig = {
   databaseURL: process.env.VUE_APP_DATABASE_URL,     
   projectId: process.env.VUE_APP_PROJECT_ID,           
   appId: process.env.VUE_APP_APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
-
   
   firebase.initializeApp(firebaseConfig);
 
