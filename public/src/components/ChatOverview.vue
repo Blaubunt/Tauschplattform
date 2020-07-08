@@ -2,7 +2,7 @@
   <div  class="container" id="app" style="background-color:white;" v-if="chatsLoaded">
       <h1 style="display:inline;">Chats</h1>
       <hr>
-      <p v-if="chats.length == 0">Noch keine Chats vorhanden? Du kannst Kontakt zu anderen Nutzern über die "Produkt finden" Seite aufnehmen. <br><br>
+      <p v-if="chats == null || chats.length == 0">Noch keine Chats vorhanden? Du kannst Kontakt zu anderen Nutzern über die "Produkt finden" Seite aufnehmen. <br><br>
       Wenn die ein Angebot gefällt und du tauschen möchtest klicke einfach auf Kontaktieren und schon füllt sich diese Seite.</p>
       <div v-for="chat in chats" :key="chat.id" @click="viewChat(chat.tradeWith)">
           <md-toolbar >

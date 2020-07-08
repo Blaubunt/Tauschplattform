@@ -83,25 +83,27 @@ const router = new VueRouter({
             ()=>{
               axios.get('/api/user/'+user.uid).then((res)=>{
                 store.commit("SET_USER",_.cloneDeep(res.data));
-                /* console.log(vm.$store.state.user); */});
-                if(store.state.conversations == null){
+              });
+                /* if(store.state.conversations == null){
                   let chats=[]
                   axios.get("/api/conversations/"+user.uid).then(function(res){
                      res.data.forEach(element => {
                          chats.push(element);
                      });
-                     store.commit("SET_CONVERSATIONS",chats);
+                     store.commit("SET_CONVERSATIONS",chats); */
                      if ( to.matched.some(record => record.meta.requiresConversations)) {
+                       console.log("chats");
                       let chats=[]
                       axios.get("/api/conversations/"+store.state.user.uid).then(function(res){
                          res.data.forEach(element => {
                              chats.push(element);
                          });
+                         console.log(chats);
                          store.commit("SET_CONVERSATIONS",chats);
                       }).catch((error)=>console.log(error));
                     }
-                  }).catch((error)=>console.log(error));
-                }
+                  /* }).catch((error)=>console.log(error)); */
+                //}
                 
                   next();
             }
