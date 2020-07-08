@@ -23,7 +23,7 @@ const geofire = require('geofire');
 var geoRef = new geofire.GeoFire(fireData.ref('/tradeLocations'));
 
 async function searchItems(req, res) {
-  let geoQuery = geoRef.query({center: [8.88058,47.7877], radius:500});
+  let geoQuery = geoRef.query({center: [8.88058,47.7877], radius:15});
   let trades = await fireData.ref('/trades').once('value');
   let radiusTrades=[];
   geoQuery.on("key_entered", function(key, location) {

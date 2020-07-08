@@ -253,13 +253,6 @@ this.initialLocation(geoRef);
 placesAutocomplete.on('change', function(event){
   vm.$store.commit('SET_LOCATION',event.suggestion.latlng);
   vm.geoQuery = geoRef.query({center: [event.suggestion.latlng.lat,event.suggestion.latlng.lng], radius:15});
-  /* firebase.database().ref('/trades').once('value').then(function(elems){
-    console.log(elems);
-  vm.geoQuery.on("key_entered", function(key, location) {
-    console.log(key)
-    elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child)));
-  });
-  }); */
   vm.geoQuery.on("key_entered", function(key, location, distance) {
     vm.items=[];
     firebase.database().ref('/trades').once('value').then(function(elems){
@@ -268,7 +261,6 @@ placesAutocomplete.on('change', function(event){
 });
 vm.geoQuery.on("ready", function() {
   vm.geoQuery.cancel();
-  console.log("ready");
 });
   
 });
