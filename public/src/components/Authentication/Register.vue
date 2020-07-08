@@ -182,11 +182,13 @@ export default {
       this.login=true;
     },
     googleLogin(){
+      var vm = this;
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result)=>{
         vm.saveUser(result.user);
         
       }).catch((err)=>{
+        console.log(err);
         alert("Something went wrong");
       });
     },
@@ -254,7 +256,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 40vw;
-  height: 30vh;
+  padding: 10px;
   z-index: 1000;
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
