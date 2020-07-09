@@ -1,6 +1,6 @@
 <template>
     <div class="container" style="padding-top:1vh">
-        <md-dialog-confirm
+        <!-- <md-dialog-confirm
       :md-active.sync="deleteAccount"
       md-title="Account löschen"
       md-content="Willst du deinen Account wirklich löschen? Um mit Nutzern in Kontakt zu treten musst du dich erneut registrieren."
@@ -18,7 +18,7 @@
             <md-button class="md-primary" @click="newOffering = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
         </md-dialog-actions>
-    </md-dialog>
+    </md-dialog> -->
 <!--     <md-dialog :md-active.sync="showRevalidation" id="passwordDialog" class="dialog">
         <md-dialog-title>Bitte gib zur Bestätigung dein Passwort ein:</md-dialog-title>
         <p class="error pink-text center-align"></p>
@@ -319,6 +319,7 @@ export default {
     padding: 0 2vw;
     height:50vh;
     max-height:500px;
+    overflow:visible;
 }
 .card{
     width:50vw;
